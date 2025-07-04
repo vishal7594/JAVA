@@ -8,7 +8,6 @@ public class SaleCampaignApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SaleCampaignApplication.class, args);
-		// ABC
 	}
 
 }
