@@ -20,6 +20,7 @@ public class ProductController {
     @PostMapping("/add-product")
     public ApiResponse<ProductResponse> addProduct(@RequestBody ProductRequest request) {
 
+        System.out.println("add product request");
         ApiResponse<ProductResponse> response = null;
         try {
 

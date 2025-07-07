@@ -19,6 +19,7 @@ public class ProductService {
 
     public ProductResponse addProduct(ProductRequest request) throws RuntimeException{
 
+        System.out.println("add product service called");
         Product product = modelMapper.map(request, Product.class);
         String randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
         product.setId(randomId);
