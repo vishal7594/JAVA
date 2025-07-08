@@ -15,10 +15,10 @@ public class Product {
 
     private String title;
 
-    private BigDecimal mrp;
+    private Double mrp;
 
     @Column(name = "current_price")
-    private BigDecimal currentPrice;
+    private Double currentPrice;
 
     private int inventory;
 }

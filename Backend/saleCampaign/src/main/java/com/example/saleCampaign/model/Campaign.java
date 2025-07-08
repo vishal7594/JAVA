@@ -1,12 +1,10 @@
 package com.example.saleCampaign.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +17,7 @@ public class Campaign {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    @OneToMany(mappedBy = "campaign", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CampaignDiscount> campaignDiscounts;
 }

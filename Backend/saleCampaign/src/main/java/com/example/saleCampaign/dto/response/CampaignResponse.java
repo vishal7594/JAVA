@@ -4,7 +4,7 @@ import com.example.saleCampaign.dto.request.CampaignRequest;
 import lombok.Data;
 
 import java.util.List;
-
+@Data
 public class CampaignResponse {
     private String id;
     private String startDate;

@@ -1,11 +1,9 @@
 package com.example.saleCampaign.repository;
 
-import com.example.saleCampaign.model.Product;
+import com.example.saleCampaign.model.PriceHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface ProductRepository extends JpaRepository<Product,String> {
+public interface PriceHistoryRepository extends JpaRepository<PriceHistory, Long> {
 }
