@@ -22,7 +22,7 @@ public class CampaignDiscount {
 
     private double discount;
 
-    public CampaignDiscount(Campaign campaign, Product product, int discount) {
+    public CampaignDiscount(Campaign campaign, Product product, double discount) {
         this.campaign = campaign;
         this.product = product;
         this.discount = discount;

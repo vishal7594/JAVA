@@ -99,7 +99,7 @@ public class CampaignService {
         }
     }
 
-    @Scheduled(cron = "0 25 18 * * *")
+    @Scheduled(cron = "15 14 10 * * *")
     private  void  checkAndApplyDiscounts() {
         System.out.println("Checking and applying discounts for active campaigns...");
         LocalDate today = LocalDate.now();

@@ -2,11 +2,15 @@ package com.example.saleCampaign.service;
 
 import com.example.saleCampaign.dto.request.ProductRequest;
 import com.example.saleCampaign.dto.response.ProductResponse;
+import com.example.saleCampaign.dto.response.ProductsResponse;
 import com.example.saleCampaign.model.PriceHistory;
 import com.example.saleCampaign.model.Product;
 import com.example.saleCampaign.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -48,10 +52,11 @@ public class ProductService {
             String randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
             product.setId(randomId);
             product.setCurrentPrice(requestEntry.getMrp());
+            System.out.println("Adding product with ID: " + product.getTitle());
+            productRepository.save(product);
             products.add(product);
         }
 
-        productRepository.saveAll(products);
 
         return products.stream()
                 .map(product -> modelMapper.map(product, ProductResponse.class))
@@ -72,6 +77,22 @@ public class ProductService {
     private void  savePriceHistory(Product product, double currentPrice, double discount) {
         PriceHistory priceHistory = new PriceHistory(product, currentPrice, discount, LocalDate.now());
         priceHistoryService.savePriceHistory(priceHistory);
+    }
+
+    public ProductsResponse getAllProducts(int page, int size) {
+        Pageable pageable =  PageRequest.of(page,size);
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        List<ProductResponse> products = productPage.
+                stream().
+                map(product -> modelMapper.map(product,ProductResponse.class)).
+                toList();
+
+        ProductsResponse productsResponse = new ProductsResponse(products,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getNumberOfElements());
+        return  productsResponse;
     }
 }
 
