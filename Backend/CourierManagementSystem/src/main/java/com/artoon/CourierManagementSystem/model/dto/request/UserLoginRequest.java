@@ -6,4 +6,5 @@ import lombok.Data;
 public class UserLoginRequest {
     private  String username;
     private  String password;
+    private String token; // Optional, can be used for token-based authentication
 }

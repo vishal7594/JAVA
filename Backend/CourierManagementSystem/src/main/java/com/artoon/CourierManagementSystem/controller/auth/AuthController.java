@@ -21,6 +21,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ApiResponse<UserSignupResponse> registerUser(@RequestBody UserSignupRequest userRequest) {
+        System.out.println("role: " + userRequest.getRole());
         try {
             return  new ApiResponse<>(true, "User registered successfully", userService.registerUser(userRequest));
         }catch (Exception e)
