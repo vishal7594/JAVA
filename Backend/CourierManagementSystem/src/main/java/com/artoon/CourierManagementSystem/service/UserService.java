@@ -94,7 +94,6 @@ public class UserService implements UserDetailsService {
     }
 
     private void doAuthenticate(String username, String password) {
-        System.out.println("Authenticating user: " + username + " with password: " + password) ;
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
 
         User user = userRepository.findByUsername(username);
@@ -106,8 +105,6 @@ public class UserService implements UserDetailsService {
     }
 
     public UserLoginResponse loginUser(UserLoginRequest userRequest, String authToken) throws RuntimeException {
-        System.out.println("login user " );
-
         // get details from token
         UserDetails userDetails = null;
         User user = null;
@@ -144,7 +141,28 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("User not found");
         }
         // 5. Return Auth Response
-        return new UserLoginResponse(user.getId(), user.getUsername(), user.getRole(), token);
+        return modelMapper.map(user, UserLoginResponse.class);
+    }
 
+    public UserLoginResponse getCurrentUser(String token) throws  RuntimeException {
+        if (token == null || token.isBlank()) {
+            throw new RuntimeException("Token is required to get current user");
+        }
+
+        token = token.replace("Bearer ", "").trim();
+        System.out.println("Auth Token after trim: " + token);
+
+        if (!helper.validateToken(token)) {
+            throw new RuntimeException("Invalid or expired token");
+        }
+
+        String username = helper.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        return  modelMapper.map(user, UserLoginResponse.class);
     }
 }

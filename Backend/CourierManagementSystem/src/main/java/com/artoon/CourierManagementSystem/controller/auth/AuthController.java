@@ -5,8 +5,10 @@ import com.artoon.CourierManagementSystem.model.dto.request.UserSignupRequest;
 import com.artoon.CourierManagementSystem.model.dto.response.ApiResponse;
 import com.artoon.CourierManagementSystem.model.dto.response.UserLoginResponse;
 import com.artoon.CourierManagementSystem.model.dto.response.UserSignupResponse;
+import com.artoon.CourierManagementSystem.model.entity.User;
 import com.artoon.CourierManagementSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,6 +38,16 @@ public class AuthController {
         {
             System.out.println("Error during user login: " + e.getMessage());
             return  new ApiResponse<>(false, "User login failed: " + e.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/me")
+    public  ApiResponse<UserLoginResponse> getCurrentUser(@RequestHeader("Authorization") String token) {
+        try {
+            UserLoginResponse user = userService.getCurrentUser(token);
+            return new ApiResponse<>(true, "Current user retrieved successfully", user);
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "Failed to retrieve current user: " + e.getMessage(), null);
         }
     }
 }
