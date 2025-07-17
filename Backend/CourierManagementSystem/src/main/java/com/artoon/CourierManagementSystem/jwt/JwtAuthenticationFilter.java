@@ -1,5 +1,7 @@
 package com.artoon.CourierManagementSystem.jwt;
 
+import com.artoon.CourierManagementSystem.model.dto.response.ApiResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -28,50 +30,61 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String requestPath = request.getServletPath();
+        if (requestPath.startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String requestHeader = request.getHeader("Authorization");
-        log.info("Header :  {}", requestHeader);
+        log.info("Header : {}", requestHeader);
 
         String username = null;
         String token = null;
 
-        if (requestHeader != null && requestHeader.startsWith("Bearer")) {
-            //looking good
-            System.out.println("Header is valid !!");
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
             token = requestHeader.substring(7);
+
             try {
                 username = this.jwtHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
-                logger.info("Illegal Argument while fetching the username !!");
-                e.printStackTrace();
+                sendErrorResponse(response, "Illegal Argument while fetching the username!");
+                return;
             } catch (ExpiredJwtException e) {
-                logger.info("Given jwt token is expired !!");
-                e.printStackTrace();
+                log.info("Token expired. Ignoring it and letting unauthenticated request proceed.");
+                // Token expired — ignore and allow flow to continue without setting auth
+                filterChain.doFilter(request, response);
+                return;
             } catch (MalformedJwtException e) {
-                logger.info("Some changed has done in token !! Invalid Token");
-                e.printStackTrace();
+                sendErrorResponse(response, "Invalid token: token structure has been tampered!");
+                return;
             } catch (Exception e) {
-                e.printStackTrace();
+                sendErrorResponse(response, "Something went wrong while parsing token!");
+                return;
             }
         } else {
             logger.info("Invalid Header Value !! ");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            //fetch user detail from username
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
+            boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
+
             if (validateToken) {
-                //set the authentication
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                logger.info("Validation fails !!");
+                sendErrorResponse(response, "Token validation failed!");
+                return;
             }
         }
-        filterChain.doFilter(request, response);
 
+        filterChain.doFilter(request, response);
     }
 
 //    @Override
@@ -79,5 +92,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        String path = request.getServletPath();
 //        return path.startsWith("/auth");
 //    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write(
+                new ObjectMapper().writeValueAsString(
+                        new ApiResponse<>(false, message, null)
+                )
+        );
+    }
 
 }

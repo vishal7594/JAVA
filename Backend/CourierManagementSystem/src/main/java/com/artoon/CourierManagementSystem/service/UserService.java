@@ -9,6 +9,7 @@ import com.artoon.CourierManagementSystem.model.dto.response.UserSignupResponse;
 import com.artoon.CourierManagementSystem.model.entity.User;
 import com.artoon.CourierManagementSystem.model.UserPrincipal;
 import com.artoon.CourierManagementSystem.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -76,9 +77,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user = userRepository.save(user);
 
-        System.out.println("username: " + user.getUsername());
-        System.out.println("token: " + user.getToken());
-
         // 3. Auto-login: generate token
 
         UserDetails userDetails = loadUserByUsername(userRequest.getUsername());
@@ -100,14 +98,6 @@ public class UserService implements UserDetailsService {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
 
         User user = userRepository.findByUsername(username);
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            throw new RuntimeException("Password does not match");
-//        }
-
-        System.out.println("Encoded password in DB: " + user.getPassword());
-        System.out.println("Raw password from login: " + password);
-        System.out.println("Password match? " + passwordEncoder.matches(password, user.getPassword()));
-
         try {
             manager.authenticate(authentication);
         } catch (BadCredentialsException e) {
@@ -115,21 +105,28 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public UserLoginResponse loginUser(UserLoginRequest userRequest) {
+    public UserLoginResponse loginUser(UserLoginRequest userRequest, String authToken) throws RuntimeException {
+        System.out.println("login user " );
 
         // get details from token
-
-        boolean isTokenValid = true;
-
         UserDetails userDetails = null;
         User user = null;
 
-        if(!userRequest.getToken().isBlank() && helper.validateToken(userRequest.getToken()))
-        {
-                String username = helper.getUsernameFromToken(userRequest.getToken());
-                user = userRepository.findByUsername(username);
-                // 5. Return Auth Response
-                return new UserLoginResponse(user.getId(), user.getUsername(), user.getRole(), userRequest.getToken());
+        if (authToken != null && !authToken.isBlank()) {
+            authToken = authToken.replace("Bearer ", "").trim();
+            System.out.println("Auth Token after trim: " + authToken);
+
+            try {
+                if (helper.validateToken(authToken)) {
+                    String username = helper.getUsernameFromToken(authToken);
+                    user = userRepository.findByUsername(username);
+                    return new UserLoginResponse(user.getId(), user.getUsername(), user.getRole(), authToken);
+                }
+            } catch (ExpiredJwtException e) {
+                System.out.println("Token expired — continue with normal login flow");
+            } catch (Exception e) {
+                throw  new RuntimeException("Invalid token: " + e.getMessage());
+            }
         }
 
         // 1. Authenticate user
