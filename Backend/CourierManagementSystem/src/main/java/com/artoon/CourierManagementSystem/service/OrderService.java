@@ -9,6 +9,7 @@ import com.artoon.CourierManagementSystem.model.entity.Package;
 import com.artoon.CourierManagementSystem.model.entity.User;
 import com.artoon.CourierManagementSystem.repository.OrderRepository;
 import com.artoon.CourierManagementSystem.repository.UserRepository;
+import com.artoon.CourierManagementSystem.util.AuthHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.artoon.CourierManagementSystem.util.AuthHelper.getUserFromAuth;
 
 @Service
 public class OrderService {
@@ -56,7 +59,8 @@ public class OrderService {
     }
 
     public OrderResponse getOrderStatus(Long orderId, Authentication authentication) throws  RuntimeException {
-        User user = getUserFromAuth(authentication, userRepository);
+
+        User user = AuthHelper.getUserFromAuth(authentication, userRepository);
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -70,7 +74,7 @@ public class OrderService {
 
     public List<OrderResponse> getMyOrders(Authentication authentication) throws  RuntimeException {
 
-        User user = getUserFromAuth(authentication, userRepository);
+        User user = AuthHelper.getUserFromAuth(authentication, userRepository);
 
         List<Order> orders = orderRepository.findByCustomer(user);
         List<OrderResponse> orderResponses = new ArrayList<>();
@@ -81,6 +85,4 @@ public class OrderService {
 
         return orderResponses;
     }
-
-
 }
