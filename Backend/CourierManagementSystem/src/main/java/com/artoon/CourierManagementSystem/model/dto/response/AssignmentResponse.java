@@ -5,14 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class PackageResponse {
+@NoArgsConstructor
+public class AssignmentResponse {
     private Long id;
-    private String description;
-    private String sourceAddress;
-    private String destinationAddress;
-    private String currentLocation;
-    private PackageStatus status;
+    private PackageResponse packageDetail;
+    private Long agentId;
+    private String agentName;
+    private LocalDateTime assignedAt;
 }

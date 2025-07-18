@@ -2,8 +2,13 @@ package com.artoon.CourierManagementSystem.model.entity;
 
 import com.artoon.CourierManagementSystem.enums.PackageStatus;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@Table(name = "packages")
 public class Package {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

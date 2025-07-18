@@ -19,7 +19,7 @@ public class OrderController {
 
 
     @PostMapping("/order-place")
-    public ApiResponse<OrderResponse> placeOrder(OrderRequest orderRequest, Authentication authentication) {
+    public ApiResponse<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest, Authentication authentication) {
 
         try {
             OrderResponse orderResponse = orderService.placeOrder(authentication, orderRequest);

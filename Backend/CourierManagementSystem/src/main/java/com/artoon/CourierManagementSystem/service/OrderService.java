@@ -10,6 +10,7 @@ import com.artoon.CourierManagementSystem.model.entity.User;
 import com.artoon.CourierManagementSystem.repository.OrderRepository;
 import com.artoon.CourierManagementSystem.repository.UserRepository;
 import com.artoon.CourierManagementSystem.util.AuthHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import static com.artoon.CourierManagementSystem.util.AuthHelper.getUserFromAuth;
 
 @Service
+@Slf4j
 public class OrderService {
 
     @Autowired
@@ -31,11 +33,7 @@ public class OrderService {
 
     public OrderResponse placeOrder(Authentication authentication, OrderRequest orderRequest) throws  RuntimeException {
 
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        User user = AuthHelper.getUserFromAuth(authentication, userRepository);
 
         List<Package> packages = new ArrayList<>();
 
