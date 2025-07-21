@@ -6,6 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,16 @@ public class JwtHelper {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60; // this is 5hr * 60min * 60 seconds
 
     private String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
+
+
+//    JwtHelper()
+//    {
+//        SecureRandom secureRandom = new SecureRandom();
+//        byte[] randomBytes = new byte[32]; // 256 bits
+//        secureRandom.nextBytes(randomBytes);
+//        secret = Base64.getEncoder().encodeToString(randomBytes);
+//        System.out.println("Generated Secret Key: " + secret);
+//    }
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
