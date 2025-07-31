@@ -1,4 +1,4 @@
-package deadlock;
+package multithreading;
 
 public class DeadlockExample {
     public static void main(String[] args) {
