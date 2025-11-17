@@ -12,7 +12,7 @@ public class DSA {
 
         if(s1.length() != s2.length())
         {
-            System.out.println("Not Isomorphic");
+            System.out.println("Not Isomorphic");   
             return;
         }
 

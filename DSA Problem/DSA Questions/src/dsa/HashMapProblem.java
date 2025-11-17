@@ -116,6 +116,28 @@ public class HashMapProblem {
 //        }
     }
 
+
+    public  boolean  ContainsDuplicte()
+    {
+        int k  = 3;
+        int[] arr = {1,2,3,1};
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            if(!hashMap.containsKey(arr[i]))
+            {
+                hashMap.put(arr[i],i);
+            }else
+            {
+               int diff =  Math.abs(hashMap.get(arr[i]) - i);
+               if(diff <= k) return true;
+               else  hashMap.put(arr[i],i);
+            }
+        }
+        return  false;
+    }
+
+
 }
 
 
