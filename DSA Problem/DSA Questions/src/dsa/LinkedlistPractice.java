@@ -96,6 +96,62 @@ class  LinkedListModel
 {
     Node head,tail;
 
+    public  void  checkPalindrome(Node head)
+    {
+        Node slow = head;
+        Node fast = head;
+
+        while (fast != null && fast.next != null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        Node secondHalf = reverseList(slow);
+        Node firstHalf = head;
+
+        while (secondHalf != null)
+        {
+            if(firstHalf.data != secondHalf.data)
+            {
+                System.out.println("not palindrome");
+                return;
+            }
+            firstHalf = firstHalf.next;
+            secondHalf = secondHalf.next;
+        }
+        System.out.println("palindrome");
+
+
+
+    }
+
+    public Node removeElements(Node head, int val) {
+        if(head == null) return  null;
+
+        head.next = removeElements(head.next,val);
+
+        if(head.data == val) return head.next;
+        else return head;
+    }
+
+
+    public  Node reverseList(Node head)
+    {
+        Node prev = null;
+        Node current = head;
+        Node next = null;
+        while (current != null)
+        {
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        head = prev;
+        return  head;
+    }
+
 
     public  Node  MergedTwoList(Node l1, Node l2)
     {
@@ -192,6 +248,7 @@ class  LinkedListModel
         }
 
     }
+
 
 
 

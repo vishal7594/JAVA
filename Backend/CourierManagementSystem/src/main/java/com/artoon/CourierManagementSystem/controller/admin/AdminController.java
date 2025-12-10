@@ -3,6 +3,8 @@ package com.artoon.CourierManagementSystem.controller.admin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("/admin")
@@ -16,5 +18,5 @@ public class AdminController {
         return "Welcome to the Admin Dashboard!";
     }
 
-    // Additional admin-related endpoints can be added here
+
 }

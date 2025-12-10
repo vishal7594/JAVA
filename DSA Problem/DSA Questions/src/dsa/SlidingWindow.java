@@ -6,8 +6,8 @@ import java.util.Set;
 
 public class SlidingWindow {
     public static void main(String[] args) {
-//        findMaxSUbStringLength();
-        Distinct();
+       findMaxSUbStringLength();
+       // Distinct();
     }
     // Find the maximum length of a substring with non repeating characters
     public static   void  findMaxSUbStringLength()
